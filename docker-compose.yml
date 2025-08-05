@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: saudi_car_price_app
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./eda:/app/eda
+    environment:
+      - PORT=8501
+      - ENVIRONMENT=production
+    restart: unless-stopped
+    command: >
+      sh -c "python data_cleaning.py &&
+             python eda.py &&
+             python train_model.py &&
+             streamlit run app.py --server.port=8501 --server.address=0.0.0.0"
